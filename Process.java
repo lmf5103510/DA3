@@ -23,13 +23,12 @@ public class Process {
 		Byzantine_RMI proc = (Byzantine_RMI) Naming.lookup("rmi://localhost:"+port+"/BZT"+i);	
 		
 		try{
-			Thread.sleep(1500);
+			Thread.sleep(2500);
 			proc.setProcessesNetwork();
 			while(!proc.isOver()){
 				proc.nBroadcast();
-				Thread.sleep(1500);
+				Thread.sleep(2500);
 			}
-			
 		}catch (Exception e){
 			e.printStackTrace();
 			System.out.println("No!");

@@ -1,0 +1,1 @@
+java -Djava.security.policy=my.policy -cp ../ Process 1 10 2 true

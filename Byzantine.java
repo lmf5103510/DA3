@@ -38,7 +38,6 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 		else{
 			System.out.println("I will destroy you guys! hahahaaa!");
 		}
-		
 	}
 
 	public void setProcessesNetwork() throws RemoteException{
@@ -58,6 +57,7 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 	public boolean isOver() throws RemoteException {
 		return over;
 	}
+	
 	@Override
 	public void nBroadcast() throws RemoteException {
 		// TODO Auto-generated method stub
@@ -91,29 +91,28 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 	@Override
 	public void nReceive(Messages msg) throws RemoteException {
 		// TODO Auto-generated method stub
-		if(notification.size() != n-f){
-			notification.add(msg); 
-			if(notification.size() == n-f){
-				goProposal();
-			}
+		notification.add(msg); 
+		if(notification.size() == n-f){
+			goProposal();
 		}
 	}
 	
-	
-	public void goProposal() throws RemoteException{
-		
+	public void goProposal() throws RemoteException{		
 		if(correct){
 			int N_0 = 0, N_1 = 0;
 			float C_1 = ((float)(n+f))/2;
+			int size = 0;
 			for(Messages s : notification){
-				if(s.v == 0){
-					N_0++;
+				if(size < n-f){
+					if(s.v == 0){
+						N_0++;
+					}
+					if(s.v == 1){
+						N_1++;
+					}
 				}
-				if(s.v == 1){
-					N_1++;
-				}
+				size++;
 			}
-			notification.clear();
 			
 			if((float)N_0 >C_1){
 				Messages s = new Messages();
@@ -148,7 +147,6 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 		}
 		// If the general is traitor, never send any message or send fake message
 		else{
-			notification.clear();
 			int method = (int)Math.random()*2;
 			if(method == 0){
 				
@@ -168,11 +166,9 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 	@Override
 	public void pReceive(Messages msg) throws RemoteException {
 		// TODO Auto-generated method stub
-		if(proposal.size() != n-f){
-			proposal.add(msg); 
-			if(proposal.size() == n-f){
-				goDecision();
-			}
+		proposal.add(msg); 
+		if(proposal.size() == n-f){
+			goDecision();
 		}
 	}
 	
@@ -183,15 +179,18 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 		}
 		else{
 			int P_0 = 0, P_1 = 0;
+			int size = 0;
 			for(Messages s : proposal){
-				if(s.v == 0){
-					P_0++;
+				if(size<n-f){
+					if(s.v == 0){
+						P_0++;
+					}
+					if(s.v == 1){
+						P_1++;
+					}
 				}
-				if(s.v == 1){
-					P_1++;
-				}
+				size++;
 			}
-			proposal.clear();
 			
 			if(P_0 > f || P_1 > f){
 				if(P_0 > f){
@@ -212,10 +211,9 @@ public class Byzantine extends UnicastRemoteObject implements Byzantine_RMI  {
 			else{
 				v = (int)(Math.random()*2); 
 			}
-			
-			round++;
 		}
+		round++;
+		notification.clear();
+		proposal.clear();
 	}
-	
-	
 }
